@@ -1,0 +1,11 @@
+{
+  "express": {
+    "port": 3000
+  },
+  "api": {
+    "hostname": "localhost",
+    "port": 3000,
+    "prefix": "",
+    "secure": false
+  }
+}

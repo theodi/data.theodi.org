@@ -1,0 +1,11 @@
+{
+  "api": {
+    "hostname": "data.theodi.org",
+    "port": "",
+    "prefix": "",
+    "secure": true
+  },
+  "frontend": {
+    "webroot": "http://theodi.org"
+  }
+}

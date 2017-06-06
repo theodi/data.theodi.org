@@ -1,0 +1,26 @@
+{
+  "name": "data.theodi.org",
+  "version": "1.0.0",
+  "description": "data.theodi.org",
+  "main": "index.js",
+  "engines": {
+    "node": "7.x"
+  },
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theodi/data.theodi.org.git"
+  },
+  "author": "Dave Tarrant",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/theodi/data.theodi.org/issues"
+  },
+  "homepage": "https://github.com/theodi/data.theodi.org",
+  "dependencies": {
+    "config": "^1.26.1",
+    "express": "^4.15.3"
+  }
+}
