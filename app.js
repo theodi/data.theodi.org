@@ -8,6 +8,8 @@ app.get('/news', (req,res) => with_tag(req,res,'article=news','https://theodi.or
 app.get('/news.:ext', (req,res) => with_tag(req,res,'article=news','https://theodi.org/news'));
 app.get('/blog', (req,res) => with_tag(req,res,'article=blog','https://theodi.org/blog'));
 app.get('/blog.:ext', (req,res) => with_tag(req,res,'article=blog','https://theodi.org/blog'));
+app.get('/team', (req,res) => with_tag(req,res,'person=team','https://theodi.org/team'));
+app.get('/team.:ext', (req,res) => with_tag(req,res,'person=team','https://theodi.org/team'));
 app.get('/events', (req,res) => with_tag(req,res,'type=events','https://theodi.org/events'));
 app.get('/events.:ext', (req,res) => with_tag(req,res,'type=events','https://theodi.org/events'));
 app.get('/publications/:type', (req,res) => with_type(req,res,'https://theodi.org/publications'));
