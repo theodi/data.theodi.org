@@ -3,46 +3,58 @@ const express = require('express');
 const app = express();
 const app_env = app.get('env');
 
-app.get('/', (req, res) => res.send('Hello World'));
-app.get('/hello.json', (req, res) => res.json({ greeting: 'Hello World' }));
+app.get('/', (req, res) => showGuide(req,res));
+app.get('/news', (req,res) => with_tag(req,res,'article=news','https://theodi.org/news'));
+app.get('/news.:ext', (req,res) => with_tag(req,res,'article=news','https://theodi.org/news'));
+app.get('/blog', (req,res) => with_tag(req,res,'article=blog','https://theodi.org/blog'));
+app.get('/blog.:ext', (req,res) => with_tag(req,res,'article=blog','https://theodi.org/blog'));
+app.get('/events', (req,res) => with_tag(req,res,'type=events','https://theodi.org/events'));
+app.get('/events.:ext', (req,res) => with_tag(req,res,'type=events','https://theodi.org/events'));
+app.get('/publications/:type', (req,res) => with_type(req,res,'https://theodi.org/publications'));
+app.get('/publications/:type.:ext', (req,res) => with_type(req,res,'https://theodi.org/publications'));
+app.get('/tags/:tag', (req,res) => with_keyword(req,res,'https://theodi.org/tags/'));
+app.get('/tags/:tag.:ext', (req,res) => with_keyword(req,res,'https://theodi.org/tags/'));
 
-app.get('/news', function(req, res) {
-  if (req.accepts("text/html")) {
-    res.redirect(302,'https://theodi.org/news');
-  } else if (req.accepts("application/json")) {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?article=news');
-  } else if (req.accepts("text/csv")) {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?article=news');
+function showGuide(req,res) {
+  res.send("Available endpoints are <br/>" + app._router.stack.filter(r => r.route).map(r => r.route.path).join('<br/>'));
+}
+
+async function with_tag(req,res,arg,site) {
+  if (req.accepts("text/html") && !req.params.ext) {
+    res.redirect(302,site);
+  } else if (req.accepts("application/json") || req.params.ext == "json") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
+  } else if (req.accepts("text/csv") || req.params.ext == "csv") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
   } else {
-    res.redirect(302,'https://theodi.org/news');
+    res.redirect(302,site);
   }
-});
-app.get('/news.:ext', function(req,res) {
-  if (req.params.ext == "json") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?article=news');
-  } else if (req.params.ext == "csv") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?article=news');
+}
+async function with_type(req,res,site) {
+  var arg='article=' + req.params.type;
+  if (req.accepts("text/html") && !req.params.ext) {
+    res.redirect(302,site);
+  } else if (req.accepts("application/json") || req.params.ext == "json") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
+  } else if (req.accepts("text/csv") || req.params.ext == "csv") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
   } else {
-    res.redirect(302,'https://theodi.org/news');
+    res.redirect(302,site);
   }
-});
-/*
-app.get('/search.json', legacy_proxy('/search.json'));
-app.get('/tags.:ext', tags(db, url_helper));
-app.get('/tag_types.:ext', tag_types(db, url_helper));
-app.get('/tags/:tag_type_or_id.:ext', tags_type_or_id(db, url_helper));
-app.get('/tags/:tag_type/:tag_id.:ext', tags_type_and_id(db, url_helper));
-app.get('/with_tag.:ext', with_tag(db, url_helper));
-app.get('/latest.:ext', latest(db, url_helper));
-app.get('/upcoming.json', legacy_proxy());
-app.get('/course-instance.:ext', course_instance(db, url_helper));
-app.get('/lecture-list.:ext', lecture_list(db, url_helper));
-app.get('/section.:ext', section(db, url_helper));
-app.get('/related.json', legacy_proxy());
-app.get('/artefacts.json', legacy_proxy());
-app.get('/:artefactSlug.:ext', artefact(db, url_helper));
-app.get('/:artefactSlug/image', artefact_image(db));
-*/
+}
+async function with_keyword(req,res,site) {
+  var keyword = req.params.tag;
+  var arg='keyword=' + req.params.tag;
+  if (req.accepts("text/html") && !req.params.ext) {
+    res.redirect(302,site + keyword);
+  } else if (req.accepts("application/json") || req.params.ext == "json") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
+  } else if (req.accepts("text/csv") || req.params.ext == "csv") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
+  } else {
+    res.redirect(302,site + keyword);
+  }
+}
 
 console.log("Available endpoints are " + app._router.stack.filter(r => r.route).map(r => r.route.path).join(', '));
 
@@ -59,20 +71,8 @@ app.use((req, res, next) => {
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send(err.message);
-  if (!test_mode)
-    console.log(err);
+  console.log(err);
 });
-
-//////////////////////////////////////////////
-function open_mongo(mongo_config) {
-  const mongo_url = find_mongo_url(mongo_config);
-  const db = monk(mongo_url);
-
-  if (!test_mode)
-    console.log(`Connected to mongo at ${mongo_url}`);
-
-  return db;
-} // open_mongo
 
 function find_mongo_url(mongo_config) {
   if (process.env.MONGODB_URI) {
