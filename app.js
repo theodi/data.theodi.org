@@ -20,7 +20,11 @@ function showGuide(req,res) {
 }
 
 async function with_tag(req,res,arg,site) {
-  if (req.accepts("text/html") && !req.params.ext) {
+  if (req.params.ext == "json") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
+  } else if (req.params.ext == "csv") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
+  } else if (req.accepts("text/html") && !req.params.ext) {
     res.redirect(302,site);
   } else if (req.accepts("application/json") || req.params.ext == "json") {
     res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
@@ -31,8 +35,14 @@ async function with_tag(req,res,arg,site) {
   }
 }
 async function with_type(req,res,site) {
-  var arg='article=' + req.params.type;
-  if (req.accepts("text/html") && !req.params.ext) {
+  var parts = (req.params.type).split(".");
+  var arg='article=' + parts[0];
+  req.params.ext = parts[1];
+  if (req.params.ext == "json") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
+  } else if (req.params.ext == "csv") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
+  } else if (req.accepts("text/html") && !req.params.ext) {
     res.redirect(302,site);
   } else if (req.accepts("application/json") || req.params.ext == "json") {
     res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
@@ -43,9 +53,16 @@ async function with_type(req,res,site) {
   }
 }
 async function with_keyword(req,res,site) {
-  var keyword = req.params.tag;
-  var arg='keyword=' + req.params.tag;
-  if (req.accepts("text/html") && !req.params.ext) {
+  var parts = (req.params.tag).split(".");
+  var arg='article=' + parts[0];
+  req.params.ext = parts[1];
+  var keyword = parts[0];
+  var arg='keyword=' + parts[0];
+  if (req.params.ext == "json") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
+  } else if (req.params.ext == "csv") {
+    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
+  } else if (req.accepts("text/html") && !req.params.ext) {
     res.redirect(302,site + keyword);
   } else if (req.accepts("application/json") || req.params.ext == "json") {
     res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
@@ -54,6 +71,7 @@ async function with_keyword(req,res,site) {
   } else {
     res.redirect(302,site + keyword);
   }
+
 }
 
 console.log("Available endpoints are " + app._router.stack.filter(r => r.route).map(r => r.route.path).join(', '));
