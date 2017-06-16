@@ -21,6 +21,7 @@
   "homepage": "https://github.com/theodi/data.theodi.org",
   "dependencies": {
     "config": "^1.26.1",
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "ejs": "^1.0.0"
   }
 }

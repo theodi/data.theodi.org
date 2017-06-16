@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include partials/head %>
+</head>
+<body class="container">
+
+	<header>
+		<% include partials/header %>
+	</header>
+
+	<main>
+		<div class="jumbotron">
+			<h1 id="path"><%= path %></h1>
+			<p id="description">Loading...</p>
+		</div>
+		<div class="jumbotron">
+			<h2 style="width:50%; display: inline-block;">Raw data - CSV format</h2>
+			<a style="width:49%; display: inline-block; text-align:right;" href="<%= path %>.csv"><button id="download_json">Download CSV</button></a><br/>
+			<pre id="csv-renderer">Loading CSV preview...
+			<table id="table" class="display" cellspacing="0" width="100%">
+				<thead>
+		        	<tr id='tablehead'>
+		            </tr>
+		        </thead>
+		        <tbody id="tableBody">
+		        </tbody>
+			</table>
+			</pre>
+		</div>
+		<div class="jumbotron">
+			<h2 style="width:50%; display: inline-block;">Raw data - JSON format</h2>
+			<a style="width:49%; display: inline-block; text-align:right;" href="<%= path %>.json"><button id="download_json">Download JSON</button></a><br/>
+			<pre id="json-renderer">Loading JSON preview...</pre>
+		</div>
+	</main>
+
+	<footer>
+		<% include partials/footer %>
+	</footer>
+	<script>
+	$(document).ready(function() {
+		$.ajax({
+		    url: "<%= csvurl %>",
+		    success: function (csvd) {
+		        var items = $.csv.toObjects(csvd);
+		        first = items[0];
+		        columns = [];
+		        for (key in first) {
+		        	$('#tablehead').append('<th>' + key + '</th>');
+		        	obj = {};
+		        	obj.title = key;
+		        	columns.push(obj);
+		        }
+		        var resort = [];
+		        for (num in items) {
+		        	item = items[num];
+		        	arr = [];
+					Object.keys(item).forEach(function(k){
+						arr.push(item[k]);
+					});		        	
+					resort.push(arr);
+		        }
+		        console.log(resort);
+		 		var table = $('#table').DataTable({
+		 			data: resort,
+		 			columns: [
+		 				{ title: "title" },
+		 				{ title: "url" },
+		 				{ title: "author" },
+		 				{ title: "tags" },
+		 				{ title: "created_at" },
+		 				{ title: "updated_at" },
+		 				{ title: "excerpt" }
+		 			]
+		 		});
+		    }
+		});
+		$.getJSON("<%= url %>", function(data) {
+			$('#description').html(data.description);
+			$('#json-renderer').jsonViewer(data);
+		});
+	});
+	</script>	
+</body>
+</html>

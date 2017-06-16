@@ -2,8 +2,17 @@ const express = require('express');
 
 const app = express();
 const app_env = app.get('env');
+const path = require('path');
+
+app.set('view engine', 'ejs');
+
 
 app.get('/', (req, res) => showGuide(req,res));
+
+app.get('/js/jquery.json-viewer.js', (req,res) => res.sendFile(path.join(__dirname, '/views/js', 'jquery.json-viewer.js')));
+app.get('/js/jquery.csv.min.js', (req,res) => res.sendFile(path.join(__dirname, '/views/js', 'jquery.csv.min.js')));
+
+
 app.get('/news', (req,res) => with_tag(req,res,'article=news','https://theodi.org/news'));
 app.get('/news.:ext', (req,res) => with_tag(req,res,'article=news','https://theodi.org/news'));
 app.get('/blog', (req,res) => with_tag(req,res,'article=blog','https://theodi.org/blog'));
@@ -27,32 +36,24 @@ async function with_tag(req,res,arg,site) {
   } else if (req.params.ext == "csv") {
     res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
   } else if (req.accepts("text/html") && !req.params.ext) {
-    res.redirect(302,site);
+    res.render('index', {
+      url: "https://contentapi.theodi.org/with_tag.json?" + arg, 
+      csvurl: "https://contentapi.theodi.org/with_tag.csv?" + arg,
+      path: req.url
+    });
   } else if (req.accepts("application/json") || req.params.ext == "json") {
     res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
   } else if (req.accepts("text/csv") || req.params.ext == "csv") {
     res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
   } else {
-    res.redirect(302,site);
+    res.render('index', {url: "https://contentapi.theodi.org/with_tag.json?" + arg, path: req.url});
   }
 }
 async function with_type(req,res,site) {
   var parts = (req.params.type).split(".");
   var arg='article=' + parts[0];
   req.params.ext = parts[1];
-  if (req.params.ext == "json") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
-  } else if (req.params.ext == "csv") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
-  } else if (req.accepts("text/html") && !req.params.ext) {
-    res.redirect(302,site);
-  } else if (req.accepts("application/json") || req.params.ext == "json") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
-  } else if (req.accepts("text/csv") || req.params.ext == "csv") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
-  } else {
-    res.redirect(302,site);
-  }
+  with_tag(req,res,arg,site);
 }
 async function with_keyword(req,res,site) {
   var parts = (req.params.tag).split(".");
@@ -60,20 +61,7 @@ async function with_keyword(req,res,site) {
   req.params.ext = parts[1];
   var keyword = parts[0];
   var arg='keyword=' + parts[0];
-  if (req.params.ext == "json") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
-  } else if (req.params.ext == "csv") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
-  } else if (req.accepts("text/html") && !req.params.ext) {
-    res.redirect(302,site + keyword);
-  } else if (req.accepts("application/json") || req.params.ext == "json") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.json?' + arg);
-  } else if (req.accepts("text/csv") || req.params.ext == "csv") {
-    res.redirect(302,'https://contentapi.theodi.org/with_tag.csv?' + arg);
-  } else {
-    res.redirect(302,site + keyword);
-  }
-
+  with_tag(req,res,arg,site);
 }
 
 console.log("Available endpoints are " + app._router.stack.filter(r => r.route).map(r => r.route.path).join(', '));
