@@ -27,7 +27,8 @@ app.get('/tags/:tag', (req,res) => with_keyword(req,res,'https://theodi.org/tags
 app.get('/tags/:tag.:ext', (req,res) => with_keyword(req,res,'https://theodi.org/tags/'));
 
 function showGuide(req,res) {
-  res.send("Available endpoints are <br/>" + app._router.stack.filter(r => r.route).map(r => r.route.path).join('<br/>'));
+  res.render('about');
+  //res.send("Available endpoints are <br/>" + app._router.stack.filter(r => r.route).map(r => r.route.path).join('<br/>'));
 }
 
 async function with_tag(req,res,arg,site) {

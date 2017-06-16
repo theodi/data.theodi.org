@@ -14,15 +14,46 @@
 			<div class="col-sm-8">
 			
 				<div class="jumbotron">
-					<h1>This is great</h1>
-					<p>Welcome to templating using EJS</p>
+					<h1>data.theodi.org</h1>
+					<p>Welcome to data.theodi.org, showcasing a simple open data API that services the Open Data Institute website. Using this service allows anyone (humans and machines) to access the raw data behind the ODI website.</p>
+				</div>
+
+				<div class="jumbotron">
+					<h1>For humans</h1>
+					<p>All of the data can be navigated using the links at the top of this page. Under each heading you will see a preview of the raw data and be able to download that data in the <em>CSV</em> and <em>JSON</em> formats.</p>
+					<p>Each sections data (except this page) can also be downloaded by simply adding a <em>.csv</em> or <em>.json</em> extension to the URL. For example data.theodi.org/news is the human readable page, adding a .csv to make the URL data.theodi.org/news.csv will download the CSV directly.</p>
+					<h2>Why not try loading the data directly into a spreadsheet?</h2>
+					<p>Did you know you can load data directly into a Google Spreadsheet?</p>
+					<p>Simply open up a new Google Spreadsheet and in cell A1 enter the URL of any csv file, e.g.</p>
+					<p><code>
+						=IMPORTDATA("https://data.theodi.org/news.csv")
+					</code></p>
+					<p>Magic!</p>
+				</div>
+
+				<div class="jumbotron">
+					<h1>For machines</h1>
+					<p>As well as adding extensions (.csv and .json) to each API URL on data.theodi.org, content negotiation is also available. Content negotiation means the extensions are not required.</p>
+					<p>Using the HTTP ACCEPT header machines can request these formats without needing to add the extensions. Both the <em>application/json</em> and <em>text/csv</em> mimetypes are available.
 				</div>
 				
 			</div>
 			<div class="col-sm-4">
 				
 				<div class="well">
-					<h3>Look I'm A Sidebar!</h3>
+					<h3>API quick reference</h3>
+					<p>The following URL patterns are avaialble:</p>
+					<p><a href="/news"><code>/news</code></a></p>
+					<p><a href="/blog"><code>/blog</code></a></p>
+					<p><a href="/events"><code>/events</code></a></p>
+					<p><a href="/team"><code>/team</code></a></p>
+					<p><a href="/courses"><code>/courses</code></a></p>
+					<p><a href="/courses/instances"><code>/courses/instances</code></a></p>
+					<p><a href="/publications"><code>/publications</code></a></p>
+					<p><a href="/publications/guide"><code>/publications/guide</code></a></p>
+					<p><a href="/publications/case-study"><code>/publications/case-study</code></a></p>
+					<p><a href="/publications/method-report"><code>/publications/method-report</code></a></p>
+					<p><a href="/tags/ukraine"><code>/tags/{search tag}</code></a></p>
 				</div>
 
 			</div>
